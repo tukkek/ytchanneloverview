@@ -150,23 +150,29 @@ for playlist in playlists:
     if len(playlist['videoids'])==0:
         remove.append(playlist)
 for empty in remove:
-    playlists.remove(empty)
+  playlists.remove(empty)
+remove=[]
 for playlist in playlists:
-    playlist['videos']=[]
-    rating=[]
-    lastupdate=False
-    for videoid in playlist['videoids']:
-        if not videoid in videodata:
-            continue
-        video=videodata[videoid]
-        playlist['videos'].append(video)
-        rating.append(video['lpd'])
-        publishedat=video['snippet']['publishedAt'][:10]
-        if lastupdate==False or parsedate(publishedat)>parsedate(lastupdate):
-            lastupdate=publishedat
-    playlist['lpd']=sorted(rating)[int(len(rating)/2)]
-    if lastupdate!=False:
-        playlist['lastupdate']='0' if lastupdate==False else lastupdate 
+  playlist['videos']=[]
+  rating=[]
+  lastupdate=False
+  for videoid in playlist['videoids']:
+    if not videoid in videodata:
+      continue
+    video=videodata[videoid]
+    playlist['videos'].append(video)
+    rating.append(video['lpd'])
+    publishedat=video['snippet']['publishedAt'][:10]
+    if lastupdate==False or parsedate(publishedat)>parsedate(lastupdate):
+      lastupdate=publishedat
+  if len(rating)==0:
+    remove.append(playlist)
+    continue
+  playlist['lpd']=sorted(rating)[int(len(rating)/2)]
+  if lastupdate!=False:
+    playlist['lastupdate']='0' if lastupdate==False else lastupdate 
+for empty in remove:
+  playlists.remove(empty)
 body=''
 toc='Playlists:<br/>'
 playlists.remove(allvideos)
